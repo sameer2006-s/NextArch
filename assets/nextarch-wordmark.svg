@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="52" viewBox="0 0 240 52" role="img" aria-label="NextArch">
+  <title>NextArch</title>
+  <style>
+    .next { fill: #1f2328; }
+    .arch { fill: #0070f3; }
+    @media (prefers-color-scheme: dark) {
+      .next { fill: #f0f6fc; }
+    }
+  </style>
+  <text
+    x="0"
+    y="40"
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="42"
+    font-weight="700"
+    letter-spacing="-1.5"
+  >
+    <tspan class="next" fill="#1f2328">Next</tspan><tspan class="arch" fill="#0070f3">Arch</tspan>
+  </text>
+</svg>
