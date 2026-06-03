@@ -19,7 +19,7 @@
 </p>
 
 <p>
-  <strong>Feature slices</strong> · <strong>RSC</strong> · <strong>Zod</strong> · <strong>Server Actions</strong> · <strong>repositories &amp; services</strong>
+  <strong>Adaptable slices</strong> · <strong>RSC</strong> · <strong>Zod</strong> · <strong>Server Actions</strong> · <strong>strict boundaries</strong>
 </p>
 
 <p>
@@ -36,7 +36,7 @@
 
 ---
 
-An [Agent Skills](https://agentskills.io) package that keeps Next.js App Router code **consistent and scalable**: vertical slices under `features/`, minimal client islands, and clear boundaries for integrated DB, REST, or Connect/gRPC backends. Opinionated for layered BFF slices; **adapts on brownfield** repos via task scope and escape hatches.
+An [Agent Skills](https://agentskills.io) package that keeps Next.js App Router code **consistent and scalable**: server-first loading, minimal client islands, and clear boundaries for integrated DB, REST, or Connect/gRPC backends. Opinionated about dependency direction, but **adaptable to brownfield folder structure** via task scope and escape hatches.
 
 Works with [Cursor](https://cursor.com), [Claude Code](https://code.claude.com), [Codex](https://developers.openai.com/codex), [Windsurf](https://windsurf.com), and [50+ agents](https://github.com/vercel-labs/skills#supported-agents) via the [Skills CLI](https://github.com/vercel-labs/skills).
 
@@ -93,7 +93,7 @@ flowchart LR
 | **Topologies** | Integrated · Separate-REST · Separate-gRPC · Hybrid |
 | **Reads** | Server Component → service → repository / RPC |
 | **Writes** | Client island → Server Action → service → repository / RPC |
-| **Defaults** | Server Components first · Zod at actions · client only at leaves |
+| **Defaults** | Server Components first · Zod at actions · client only at leaves · repo structure first |
 
 ## Backend modes
 
@@ -153,6 +153,16 @@ The agent loads **`SKILL.md` only** up front; opens **`rules/`** and **`docs/`**
 | **Discovery** | Agent reads `name` + `description` from `SKILL.md` |
 | **Activation** | Prompt matches Next.js architecture / refactor work |
 | **Execution** | Scope → topology → plan → layered implementation |
+
+## Migrating from `nextjs-feature-architecture`
+
+The skill id is now **`nextarch`** (v1.7+). Remove the old skill if installed, then:
+
+```bash
+npx skills add sameer2006-s/NextArch --skill nextarch -y
+```
+
+Use prompts like `Using nextarch, …` (or `Using NextArch, …`).
 
 ## Contributing
 

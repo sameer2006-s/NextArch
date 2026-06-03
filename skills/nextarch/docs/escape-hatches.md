@@ -9,6 +9,19 @@ When the repo **already** chose a primary data layer, keep **topology + server/c
 | **Colocated server fetch** in `page.tsx` | Fine for one-off read-only pages | Extra service + repository with no reuse |
 | **Route Handlers** as public API | Keep webhooks, external consumers, streaming | Replacing with Server Actions unless internal forms (integrated) |
 
+## Trigger gray zone
+
+| Trigger this skill | Do not trigger (or Patch-only) |
+|--------------------|--------------------------------|
+| App Router structure, server/client boundaries | New tRPC procedure only |
+| Moving server-loadable data off `"use client"` / `useEffect` pages | `useEffect` dependency bug only |
+| New domain/module slice with layers | Storybook component only |
+| Server Actions + Zod on forms (no tRPC migration) | Middleware-only i18n routing |
+| Hybrid split (DB + `API_URL` per feature) | Hydration-only `suppressHydrationWarning` |
+| Server-owned auth or secrets need a bridge | Client polling/live widget intentionally owns fetch |
+
+**Partial apply on mixed apps:** enforce boundaries + minimal client; do not add `repositories/` wrapping REST over existing tRPC.
+
 ## tRPC
 
 - Extend `server/routers` or existing `app/api/trpc` setup.
@@ -22,6 +35,6 @@ When the repo **already** chose a primary data layer, keep **topology + server/c
 
 ## Defer this skill
 
-If the task is **only** “add a tRPC procedure” or “add a GraphQL field” with no App Router structure change, follow that stack’s docs instead of imposing `features/*/repositories/`.
+If the task is **only** “add a tRPC procedure,” “add a GraphQL field,” “fix a hook dependency,” or “add a webhook route” with no App Router structure change, follow that stack’s docs instead of imposing `features/*/repositories/`.
 
 For mixed apps (tRPC + a few Server Actions), state **Hybrid** mentally: one transport per feature file.

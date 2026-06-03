@@ -42,6 +42,23 @@ export const postRepository = {
 };
 ```
 
+## Repository (integrated — Drizzle)
+
+Use when `drizzle-orm` is in `package.json` and `lib/db` exports Drizzle.
+
+```typescript
+import { db } from "@/lib/db";
+import { posts } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+
+export const postRepository = {
+  findById: (id: string) =>
+    db.query.posts.findFirst({ where: eq(posts.id, id) }),
+  create: (data: typeof posts.$inferInsert) =>
+    db.insert(posts).values(data).returning(),
+};
+```
+
 ## Repository (REST — 404 → null)
 
 ```typescript

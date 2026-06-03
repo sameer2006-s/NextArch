@@ -2,6 +2,30 @@
 
 Version in `skills/nextarch/skill.json`.
 
+## [1.9.0] - 2026-06-03
+
+### Added
+
+- **Planning output templates** in `SKILL.md` (Patch / Feature / Greenfield shapes + comments example)
+- **Lightest viable structure** guidance in `SKILL.md` to prevent unnecessary layers on small tasks
+- **Fixture-backed evals 8–10** for module-preserving dashboard refactors, REST 404 handling, and gRPC client refresh boundaries
+- [`docs/testing.md`](skills/nextarch/docs/testing.md) — unit, integration, E2E placement
+- **Trigger gray zone** table in [`docs/escape-hatches.md`](skills/nextarch/docs/escape-hatches.md)
+- **Drizzle repository snippet** in [`docs/snippets/core.md`](skills/nextarch/docs/snippets/core.md)
+- **Implementation order** checklist in [`rules/architecture.md`](skills/nextarch/rules/architecture.md)
+- Evals 5–10 (hybrid, Separate-REST, tRPC escape hatch, and implementation fixture scenarios); optional `must_not` in eval schema
+- `notes` field on `trigger-eval.json` entries (maintainer-only)
+- [`scripts/scaffold-feature.mjs`](scripts/scaffold-feature.mjs) — `npm run skill:scaffold -- <name>`
+
+### Changed
+
+- **Description** aligned between `SKILL.md` and `skill.json`; clearer intent-based triggers and non-triggers (tRPC/GraphQL procedure-only, hook bugfixes, webhooks)
+- **Folder guidance** reframed as strict boundaries with adaptable project structure (`features/`, `src/modules/`, `server/`, route colocation)
+- **Tags:** `vertical-slice`, `domain-slices` (removed `feature-sliced-design`)
+- **skill:check** — description sync, SKILL load links ⊆ lazyDocs, eval count ≥ 10, fixture references, line-count warn at 150; forbidden **git-tracked** paths
+- **CI** — required Skills CLI list includes `nextarch`; path filters; `workflow_dispatch`; concurrency; `permissions: contents: read`
+- README positioning; evals README release gate for all 10 behavioral evals
+
 ## [1.8.0] - 2026-05-25
 
 ### Added

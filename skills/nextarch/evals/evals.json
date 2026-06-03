@@ -47,9 +47,109 @@
       "files": [],
       "expectations": [
         "States Patch or minimal scope — not full Greenfield skeleton with all seven sections",
-        "Does not mandate deleting app/api/posts without user-facing reason",
         "Mentions adapting to existing layout or API",
         "Does not propose big-bang features/ migration for entire app"
+      ],
+      "must_not": [
+        "Mandate deleting app/api/posts without user consent or clear reason"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Using nextarch, we have orders in Postgres via Prisma but billing/invoices come from an external REST API (API_URL in env). How should features/ be split for checkout?",
+      "expected_output": "Hybrid topology; features/orders/ Prisma only; features/billing/ REST only; no mixed transport in one repository file.",
+      "files": [],
+      "expectations": [
+        "States Hybrid topology or per-feature transport split",
+        "Proposes separate features (e.g. orders vs billing/payments)",
+        "Orders feature uses Prisma/repository to DB only",
+        "Billing feature uses apiRequest or lib/api — not Prisma in same repo file",
+        "Does not mix db and apiRequest in one repository file"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Using nextarch, add a product detail page at app/products/[slug]/page.tsx. Data comes from our external REST API (API_URL). No ORM in this repo.",
+      "expected_output": "Separate-REST; lib/api/client; repository 404 to null; no domain invariants duplicated in Next services.",
+      "files": [],
+      "expectations": [
+        "States Separate-REST topology",
+        "Mentions lib/api/client or apiRequest pattern",
+        "Mentions repository layer for HTTP mapping",
+        "Mentions 404 maps to null or notFound — not throwing for missing product",
+        "Does not add Prisma or lib/db for this feature"
+      ],
+      "must_not": [
+        "Duplicate backend business rules as domain invariants in Next.js services"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Using nextarch, we already use tRPC for all data. Add a createPost mutation to the posts router — no App Router refactor needed.",
+      "expected_output": "Defer repository template; extend tRPC router; escape hatch — not features/posts/repositories.",
+      "files": [],
+      "expectations": [
+        "Does not propose features/posts/repositories/ wrapping REST",
+        "Mentions extending existing tRPC router or server/routers",
+        "References escape hatch or deferring full NextArch repository layer",
+        "Does not impose lib/api/client for internal data"
+      ],
+      "must_not": [
+        "Create a new features/posts/repositories/ folder for tRPC-only work"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Using nextarch, refactor the dashboard fixture so app/dashboard/page.tsx is server-first. Keep the existing src/modules layout and avoid creating features/dashboard unless it is clearly justified.",
+      "expected_output": "Uses existing src/modules/dashboard layout; removes page-level client data loading; keeps only interactive leaves as client components.",
+      "files": [
+        "evals/fixtures/dashboard-refactor.md"
+      ],
+      "expectations": [
+        "Keeps or extends src/modules/dashboard rather than creating a duplicate features/dashboard tree",
+        "Does not leave app/dashboard/page.tsx as a client component for initial stats loading",
+        "Moves server-loadable stats out of useEffect",
+        "Does not import lib/db or lib/api/client from a client component",
+        "Uses the lightest viable structure and does not create empty layer folders"
+      ],
+      "must_not": [
+        "Create features/dashboard only to mirror the existing src/modules/dashboard layout"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Using nextarch, add product detail behavior to the REST fixture. Data comes from API_URL, missing products should render notFound(), and this repo has no ORM.",
+      "expected_output": "Separate-REST implementation with server page, HTTP mapping outside UI, 404 mapped to null/notFound, and no Prisma/db additions.",
+      "files": [
+        "evals/fixtures/rest-product-detail.md"
+      ],
+      "expectations": [
+        "States Separate-REST topology",
+        "Keeps API_URL access server-side and out of client components",
+        "Maps REST 404 to null or notFound rather than a raw thrown UI error",
+        "Does not add Prisma, lib/db, or DB repositories",
+        "Does not duplicate backend business invariants in Next.js services"
+      ],
+      "must_not": [
+        "Import env, API_URL, or apiRequest from a client component"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Using nextarch, add client refresh to the Connect RPC fixture. Server-render the item detail first, then allow TanStack refresh without exposing auth or RPC clients to the browser.",
+      "expected_output": "Separate-gRPC plan with shared grpc client, service result, server query bridge, and hook that does not import ApiClient/getAuthedContext.",
+      "files": [
+        "evals/fixtures/grpc-refresh.md"
+      ],
+      "expectations": [
+        "States Separate-gRPC topology",
+        "Uses or preserves one shared lib/grpc/clients.ts client registry",
+        "Adds a server query bridge for TanStack refresh",
+        "Hook does not import ApiClient, grpc client registry, env, or getAuthedContext",
+        "Mentions ServiceResult or a repo-equivalent success/error result shape"
+      ],
+      "must_not": [
+        "Create a Connect transport inside a client hook"
       ]
     }
   ]

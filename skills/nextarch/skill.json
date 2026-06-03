@@ -1,8 +1,8 @@
 {
   "name": "nextarch",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "displayName": "NextArch",
-  "description": "NextArch — Next.js App Router feature slices, server-first loading, Zod, Server Actions, repositories, services (Prisma, Drizzle, REST, Connect/gRPC). useEffect refactors, vertical slices, TanStack bridges, hybrid DB+API. Not for copy/CSS-only, non-Next.js, or backend-only work.",
+  "description": "NextArch - use for Next.js App Router work that changes architecture, data ownership, server/client boundaries, or domain/module structure: moving server-loadable data out of client components, adding or refactoring feature or module slices, wiring Server Actions, or choosing Prisma/Drizzle, REST, or Connect/gRPC boundaries. Trigger when the user says NextArch. Prefer existing project structure; enforce strict boundaries with adaptable folders. Do not use for styling/copy, isolated component work, one-file fetch/useEffect bug fixes with no App Router boundary change, middleware-only work, net-new Pages Router apps, backend-only APIs, or tRPC/GraphQL procedure-only tasks.",
   "entry": "SKILL.md",
   "repository": "https://github.com/sameer2006-s/NextArch",
   "license": "MIT",
@@ -12,15 +12,18 @@
     "react",
     "app-router",
     "server-components",
+    "vertical-slice",
+    "domain-slices",
     "feature-sliced-design",
+    "feature-based-design",
+    "feature-based-architecture",
     "architecture",
     "typescript",
     "zod",
     "server-actions",
     "connect-rpc",
     "prisma",
-    "drizzle",
-    "vertical-slice"
+    "drizzle"
   ],
   "lazyDocs": [
     "rules/architecture.md",
@@ -30,6 +33,7 @@
     "docs/escape-hatches.md",
     "docs/topology.md",
     "docs/performance.md",
+    "docs/testing.md",
     "docs/snippets/core.md",
     "docs/snippets/grpc.md",
     "docs/snippets/auth-env.md"

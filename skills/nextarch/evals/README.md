@@ -6,8 +6,8 @@ Regression assets for the `nextarch` skill. Deterministic checks run in CI via `
 
 | File | Purpose |
 |------|---------|
-| [evals.json](evals.json) | 4 behavioral evals with verifiable expectations |
-| [trigger-eval.json](trigger-eval.json) | 25 trigger queries (`should_trigger` true/false) for description tuning |
+| [evals.json](evals.json) | 10 behavioral evals with `expectations`, optional `must_not`, and fixture-backed scenarios |
+| [trigger-eval.json](trigger-eval.json) | 25 trigger queries (`should_trigger` true/false); optional `notes` for maintainers |
 | [benchmark.example.json](benchmark.example.json) | Shape reference for aggregated benchmark output |
 
 ## Deterministic checks (every PR)
@@ -16,7 +16,7 @@ Regression assets for the `nextarch` skill. Deterministic checks run in CI via `
 npm run skill:check
 ```
 
-Validates package layout, lazyDocs sync, version alignment with CHANGELOG, and trigger-eval schema.
+Validates package layout, description sync, lazyDocs sync, SKILL load links, version alignment with CHANGELOG, eval fixture references, forbidden paths, and trigger-eval schema. CI also requires `npx skills add . --list` to show `nextarch`.
 
 ## Agent benchmark workspace
 
@@ -31,7 +31,7 @@ Layout at repo root (gitignored):
 ```
 nextarch-workspace/
   iteration-1/
-    eval-0/ ... eval-3/
+    eval-0/ ... eval-9/
       with_skill/outputs/    # agent response with skill enabled
       old_skill/outputs/     # optional baseline (skill snapshot)
     benchmark.json
@@ -42,14 +42,16 @@ nextarch-workspace/
 ### Run behavioral evals (release gate)
 
 1. Enable the **nextarch** skill in your agent.
-2. For each eval in `evals.json` (ids 1–4), run the `prompt` and save the full response to:
-   - `nextarch-workspace/iteration-N/eval-<id>/with_skill/outputs/response.md`
-3. Grade each response against `expectations` (manual or skill-creator grader).
+2. For each eval in `evals.json` (ids 1–10), run the `prompt` and save the full response to:
+   - `nextarch-workspace/iteration-N/eval-<id-1>/with_skill/outputs/response.md`
+3. Grade each response against `expectations` and `must_not` when present (manual or skill-creator grader).
 4. Target: **all expectations pass** for every eval before tagging a release.
 
 ### Trigger evals (when `description` changes)
 
 Use [trigger-eval.json](trigger-eval.json) with skill-creator’s description tooling (`improve_description.py` / comparator). Re-run before merging any edit to the `description` field in `SKILL.md`.
+
+**Target:** ≥90% precision/recall on the 25 queries before release.
 
 ### skill-creator integration
 
@@ -72,8 +74,8 @@ For iteration 2+, pass `--previous-workspace nextarch-workspace/iteration-1`.
 
 Track iterations at `nextarch-workspace/history.json`. See skill-creator `references/schemas.md` for the full schema. Example baseline is committed at [history.example.json](history.example.json).
 
-## Release criteria (v1.8.0+)
+## Release criteria (v1.9.0+)
 
 - `npm run skill:check` green
-- Iteration benchmark: 4/4 evals pass all expectations
-- If `description` changed: trigger-eval review completed
+- Iteration benchmark: all 10 evals pass all expectations (and `must_not` when set)
+- If `description` changed: trigger-eval review completed (≥90% on 25 queries)

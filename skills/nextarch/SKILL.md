@@ -1,39 +1,42 @@
 ---
 name: nextarch
 description: >-
-  NextArch skill — use when building or refactoring Next.js App Router apps with
-  features/, server-first loading, Zod, Server Actions, repositories, and services
-  (Prisma, Drizzle, REST, Connect/gRPC). Also when user says NextArch or asks for
-  feature-sliced App Router architecture. Use for useEffect fetch refactors,
-  vertical slices, TanStack server bridges, hybrid DB+API. Not for one-line
-  copy/CSS-only fixes, styling-only, non-Next.js, backend-only APIs, or
-  middleware-only tasks with no feature structure change.
+  NextArch - use for Next.js App Router work that changes architecture, data
+  ownership, server/client boundaries, or domain/module structure: moving
+  server-loadable data out of client components, adding or refactoring feature or
+  module slices, wiring Server Actions, or choosing Prisma/Drizzle, REST, or
+  Connect/gRPC boundaries. Trigger when the user says NextArch. Prefer existing
+  project structure; enforce strict boundaries with adaptable folders. Do not use
+  for styling/copy, isolated component work, one-file fetch/useEffect bug fixes
+  with no App Router boundary change, middleware-only work, net-new Pages Router
+  apps, backend-only APIs, or tRPC/GraphQL procedure-only tasks.
 ---
 
 # NextArch
 
-Server-first Next.js App Router architecture (feature slices, layered data boundaries).
+Server-first Next.js App Router architecture: strict data boundaries, adaptable folders.
 
-Default to **server-first, feature-sliced** TypeScript for full-stack App Router work. **Extend** existing repo patterns when they conflict — see [docs/brownfield.md](docs/brownfield.md). Reject client-heavy SPA data loading unless the product requires it.
+Default to **server-first** TypeScript. Match the repo first: folder names, validators, result types, tests, and route conventions win over this skill's defaults - [docs/brownfield.md](docs/brownfield.md).
 
-**`features/`** = vertical slice **by domain** (comments, billing) — not Feature-Sliced Design layer folders. Do not add `features/shared/ui` unless the repo already does.
+**Strict boundaries, adaptable folders:** enforce dependency direction and server/client safety whether the repo uses `features/`, `src/modules/`, `server/`, or route colocation. `features/` is only the default for new domain work when no clear convention exists.
 
-**Out of scope:** net-new Pages Router (`pages/`) apps, non-Next.js frameworks, CSS-only UI, middleware-only changes with no data-boundary or folder impact.
+**Out of scope:** Pages Router-only work, non-Next.js, CSS/copy-only, middleware-only changes with no data-boundary or structure impact.
 
 ## Before code
 
 1. Classify [task scope](#task-scope). Ask once if unclear.
 2. Detect topology (below). Ask once if repo is ambiguous.
-3. Output planning artifact per scope (not always full skeleton).
-4. Load on demand — do not re-read SKILL sections in linked files:
-   - Brownfield / existing layout → [docs/brownfield.md](docs/brownfield.md)
-   - tRPC, GraphQL, colocated fetch → [docs/escape-hatches.md](docs/escape-hatches.md)
+3. Scan existing structure (`features/`, `src/modules/`, `server/`, route colocation, validators, results) and output [planning artifact](#planning-output).
+4. Load on demand:
+   - Brownfield → [docs/brownfield.md](docs/brownfield.md)
+   - tRPC, GraphQL → [docs/escape-hatches.md](docs/escape-hatches.md)
    - Enforcement → [rules/architecture.md](rules/architecture.md)
    - Folders → [rules/folder-structure.md](rules/folder-structure.md)
    - TypeScript / Next.js → [rules/coding-standards.md](rules/coding-standards.md)
-   - Hybrid topology → [docs/topology.md](docs/topology.md)
+   - Hybrid → [docs/topology.md](docs/topology.md)
    - Performance → [docs/performance.md](docs/performance.md)
-   - REST / integrated → [docs/snippets/core.md](docs/snippets/core.md)
+   - Testing → [docs/testing.md](docs/testing.md)
+   - REST / integrated / Drizzle → [docs/snippets/core.md](docs/snippets/core.md)
    - gRPC → [docs/snippets/grpc.md](docs/snippets/grpc.md)
    - Auth / env → [docs/snippets/auth-env.md](docs/snippets/auth-env.md)
 
@@ -41,19 +44,36 @@ Default to **server-first, feature-sliced** TypeScript for full-stack App Router
 
 | Scope | When | Required output |
 |-------|------|-----------------|
-| **Patch** | Single file, bugfix, copy, one field; no new data boundaries | 2–4 bullet plan; **no** full skeleton |
-| **Feature** | New slice or refactor one area (default) | Short plan: Topology, Architecture tree, data flow |
-| **Greenfield** | Multi-feature, hybrid split, new app area | Full [architecture skeleton](#architecture-skeleton) |
+| **Patch** | Single file, bugfix, copy; no new data boundaries | `## Plan` (2–4 bullets), then code |
+| **Feature** | New slice or refactor one area (default) | `## Topology`, `## Architecture`, `## Data flow` |
+| **Greenfield** | Multi-feature, hybrid split, new app area | Feature sections + rendering/performance notes |
 
-Default **Feature**. Upgrade to Greenfield if multi-feature; downgrade to Patch if user scope is explicitly tiny. If repo is **tRPC/GraphQL-first**, read [escape-hatches](docs/escape-hatches.md) — apply boundaries, not full repository layer.
+Default **Feature**. Upgrade to Greenfield if multi-feature; downgrade to Patch if scope is tiny. tRPC/GraphQL-first repos: [escape-hatches](docs/escape-hatches.md) — boundaries only, not full repository layer.
 
-## Anti-goals (not optimized for)
+## Lightest structure
 
-- Realtime / WebSockets-first UIs
-- Client-heavy editors, maps, canvas apps
-- tRPC or GraphQL as the **primary** API (unless extending server/client boundaries only)
-- Net-new `pages/` Router products
-- Big-bang rewrites of an existing stack without user request
+Use the lightest structure that preserves boundaries: one-off server read → colocated async Server Component fetch; reused orchestration → service/module function; repeated DB/API access → repository/data module; mutation/form/client refresh → action or server query bridge.
+
+Do not create empty `repositories/`, `actions/`, `hooks/`, or `features/` folders. Zod, Server Actions, result shapes, and file names are defaults only when the repo is silent.
+
+## Planning output
+
+Patch: `## Plan` with 2-4 bullets.
+
+```markdown
+## Topology
+Integrated — Prisma, domain rules in services/
+
+## Architecture
+features/comments/{schemas,repositories,services,actions,components}
+app/posts/[id]/page.tsx — server list + form island
+
+## Data flow
+Read: page → list-comments.service → comment.repository → db
+Write: form → create-comment.action (Zod) → service → repository → revalidatePath
+```
+
+Greenfield adds feature sections plus rendering/server-client/performance notes.
 
 ## Topology
 
@@ -70,14 +90,7 @@ Default **Feature**. Upgrade to Greenfield if multi-feature; downgrade to Patch 
 | Separate-REST | UI → actions → services → repositories → HTTP | External backend |
 | Separate-gRPC | UI → actions → services → *ApiClient → backend | External backend |
 
-**gRPC:** one `lib/grpc/clients.ts`; `ServiceResult<T>`; TanStack via `*.queries.ts` bridges.
-
-## Result types
-
-| Layer | Shape (default if repo silent) |
-|-------|--------------------------------|
-| Server Actions | `{ ok: true, data? } \| { ok: false, error }` |
-| gRPC services | `{ success: true, data } \| { success: false, error }` |
+**gRPC:** one `lib/grpc/clients.ts`; `ServiceResult<T>`; TanStack via `*.queries.ts` bridges. Defaults: Server Actions return `{ ok: true, data? } | { ok: false, error }`; gRPC services return `{ success: true, data } | { success: false, error }`.
 
 ## Layers
 
@@ -89,7 +102,7 @@ Default **Feature**. Upgrade to Greenfield if multi-feature; downgrade to Patch 
 | repositories | CRUD, HTTP mapping | Business rules, React |
 | hooks | TanStack via action bridges | *ApiClient, `getAuthedContext` |
 
-Single read in one page with no shared logic → service/repository **optional**. See [rules/architecture.md](rules/architecture.md).
+Build order and optional layers: [rules/architecture.md](rules/architecture.md).
 
 ## Structure
 
@@ -98,37 +111,13 @@ features/<name>/{components,services,schemas,types?,hooks?,utils?,repositories?,
 app/  components/  lib/{db|api|grpc|auth,env}  types/  middleware.ts
 ```
 
+Equivalent layouts are fine when established: `src/modules/<name>/{server,data,ui}`, `app/<route>/_components + server/<domain>`, `server/routers/<domain>` (tRPC-first). Details: [rules/folder-structure.md](rules/folder-structure.md).
+
 ## Server vs client
 
-Default **Server Component**. `"use client"` at **leaves** only. `loading.tsx`, `error.tsx`, `notFound()` where routes need them.
+Default **Server Component**. `"use client"` at **leaves** only. `loading.tsx`, `error.tsx`, `notFound()` where routes need them. Conventions: [rules/coding-standards.md](rules/coding-standards.md).
 
-## TypeScript & Next.js (summary)
-
-Match repo conventions first — [rules/coding-standards.md](rules/coding-standards.md). Defaults: strict TS, Zod at actions, `useActionState`, no server-only imports in client files, `React.cache()` / `Promise.all` for server reads.
-
-## Architecture skeleton (Greenfield / large Feature)
-
-```markdown
-## Topology
-## Architecture
-## Layer responsibilities
-## Rendering strategy
-## Data flow
-## Server vs client
-## Performance
-```
-
-## Examples
-
-**Integrated:** Comments + Prisma → Feature scope: Topology, `features/comments/`, then server page + actions (no page `useEffect` fetch).
-
-**Refactor:** Client dashboard page → Feature scope: server page + service; filters in client island only.
-
-**gRPC:** Item detail + refresh → Separate-gRPC, `item.queries.ts` bridge; hook never imports `itemApiClient`.
-
-## Gotchas
-
-- `params` / `searchParams` are `Promise<>` in Next.js 15+ — await before use.
+- Gotchas: `params` / `searchParams` are `Promise<>` in Next.js 15+ — await before use.
 - Revalidate after mutations affecting cached routes or tagged fetches.
 - Separate topologies: do not duplicate backend validation in Next.js.
 - Integrated: Server Actions over new internal API routes for form mutations.
@@ -148,8 +137,9 @@ Match repo conventions first — [rules/coding-standards.md](rules/coding-standa
 - [ ] Task scope stated (Patch / Feature / Greenfield)
 - [ ] Topology stated when data boundaries involved
 - [ ] Planning artifact matches scope (not over-documented)
+- [ ] Existing project structure followed before adding new folders
 - [ ] Minimal `"use client"` (leaves only)
-- [ ] I/O in repositories or services (when layers used)
+- [ ] I/O isolated from UI (repositories/data modules when needed)
 - [ ] `loading` / `error` / `notFound` for new routes
 
 ## Rules (on conflict)

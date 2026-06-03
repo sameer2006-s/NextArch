@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "skill:check": "node scripts/skill-check.mjs",
-    "skill:workspace": "node scripts/scaffold-workspace.mjs"
+    "skill:workspace": "node scripts/scaffold-workspace.mjs",
+    "skill:scaffold": "node scripts/scaffold-feature.mjs"
   },
   "engines": {
     "node": ">=18"

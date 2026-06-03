@@ -1,102 +1,127 @@
 [
   {
-    "query": "ok so we have a next app router project and i want to move our dashboard page off useEffect fetch — it's all client side right now in app/dashboard/page.tsx pulling from /api/stats",
-    "should_trigger": true
-  },
-  {
     "query": "use NextArch to add a comments feature with prisma on our app router post page",
-    "should_trigger": true
+    "should_trigger": true,
+    "notes": "Explicit NextArch + integrated feature"
   },
   {
-    "query": "add a comments feature with prisma, list + create on post pages, we're on app router",
-    "should_trigger": true
+    "query": "ok we have app/dashboard/page.tsx marked use client and it useEffect-fetches /api/stats; move the initial stats load to the server but keep the chart controls interactive",
+    "should_trigger": true,
+    "notes": "Client data loading refactor"
   },
   {
-    "query": "small change but move post fetch from useEffect to server component on app/posts/page.tsx",
-    "should_trigger": true
+    "query": "add a comments domain with list + create on post pages, we're on app router and already have prisma in lib/db",
+    "should_trigger": true,
+    "notes": "Implicit integrated domain feature"
   },
   {
-    "query": "organize our next.js codebase into feature folders under features/ with services and repositories, we have drizzle",
-    "should_trigger": true
+    "query": "our repo uses src/modules already; add billing invoices from API_URL without forcing a new features folder",
+    "should_trigger": true,
+    "notes": "Adaptable folders + Separate-REST"
   },
   {
-    "query": "connect rpc backend @acme/api — need item detail server rendered plus tanstack refresh on the client",
-    "should_trigger": true
+    "query": "connect rpc backend @acme/api - need item detail server rendered plus tanstack refresh on the client without exposing auth",
+    "should_trigger": true,
+    "notes": "Separate-gRPC + TanStack bridge"
   },
   {
-    "query": "hybrid setup: orders in postgres via prisma but billing hits external REST API_URL — how should features/ be split",
-    "should_trigger": true
+    "query": "hybrid setup: orders in postgres via prisma but billing hits external REST API_URL - how should domains be split",
+    "should_trigger": true,
+    "notes": "Hybrid topology"
   },
   {
-    "query": "refactor this form to use server actions with zod validation in our next 15 app",
-    "should_trigger": true
+    "query": "we're migrating client-heavy app router pages to server components and module slices; where should domain logic live",
+    "should_trigger": true,
+    "notes": "Architecture guidance"
   },
   {
-    "query": "we're migrating client-heavy app router pages to server components and feature slices, where should domain logic live",
-    "should_trigger": true
+    "query": "refactor this app router checkout form to use a server action boundary with validation and revalidation",
+    "should_trigger": true,
+    "notes": "Server Action boundary change"
   },
   {
-    "query": "set up lib/grpc/clients.ts and feature services for our connect/protobuf api",
-    "should_trigger": true
+    "query": "set up lib/grpc/clients.ts and server-side item services for our connect/protobuf api",
+    "should_trigger": true,
+    "notes": "gRPC setup"
+  },
+  {
+    "query": "new product detail page in app/products/[slug]/page.tsx; data comes from external REST API and 404 should be notFound",
+    "should_trigger": true,
+    "notes": "Separate-REST page"
   },
   {
     "query": "fix typo on the submit button label on the login form",
-    "should_trigger": false
+    "should_trigger": false,
+    "notes": "Copy-only"
   },
   {
     "query": "fix tailwind spacing on the settings page hero section",
-    "should_trigger": false
+    "should_trigger": false,
+    "notes": "CSS-only"
   },
   {
-    "query": "write an express mongodb REST API for user profiles",
-    "should_trigger": false
+    "query": "the useEffect dependency array in components/search-box.tsx is missing debouncedQuery, can you fix the warning",
+    "should_trigger": false,
+    "notes": "Hook bug only, no server/client boundary change"
+  },
+  {
+    "query": "this live stock ticker intentionally polls from the browser every 5 seconds; add pause/resume controls",
+    "should_trigger": false,
+    "notes": "Intentional client polling"
+  },
+  {
+    "query": "add a stripe webhook route under app/api/stripe/webhook/route.ts and verify the signature",
+    "should_trigger": false,
+    "notes": "Webhook Route Handler only"
   },
   {
     "query": "we use trpc for all data already, add a post router with create and list",
-    "should_trigger": false
+    "should_trigger": false,
+    "notes": "tRPC procedure-only"
   },
   {
     "query": "add apollo useQuery on the client to load the current user profile",
-    "should_trigger": false
-  },
-  {
-    "query": "add trpc router for posts in our next app",
-    "should_trigger": false
-  },
-  {
-    "query": "next.js middleware only: add locale prefix /en /fr for i18n routing",
-    "should_trigger": false
-  },
-  {
-    "query": "create a reusable Button component with storybook variants",
-    "should_trigger": false
+    "should_trigger": false,
+    "notes": "GraphQL client-only"
   },
   {
     "query": "graphql codegen for our next dashboard",
-    "should_trigger": false
+    "should_trigger": false,
+    "notes": "GraphQL tooling only"
   },
   {
-    "query": "python script to merge two csv files",
-    "should_trigger": false
+    "query": "next.js middleware only: add locale prefix /en /fr for i18n routing",
+    "should_trigger": false,
+    "notes": "Middleware-only"
   },
   {
-    "query": "vue 3 pinia store for shopping cart",
-    "should_trigger": false
-  },
-  {
-    "query": "hydration mismatch error on login page — add suppressHydrationWarning",
-    "should_trigger": false
+    "query": "hydration mismatch error on login page - add suppressHydrationWarning",
+    "should_trigger": false,
+    "notes": "Hydration-only"
   },
   {
     "query": "migrate our entire site from pages/ to app/ directory step by step",
-    "should_trigger": false
+    "should_trigger": false,
+    "notes": "Pages Router migration, out of scope"
   },
   {
-    "query": "add dark mode css variables to globals.css",
-    "should_trigger": false
+    "query": "there is an existing createPost server action; fix the returned error message when zod validation fails",
+    "should_trigger": false,
+    "notes": "Server Action bugfix without architecture change"
+  },
+  {
+    "query": "create a reusable Button component with storybook variants",
+    "should_trigger": false,
+    "notes": "Storybook-only UI"
+  },
+  {
+    "query": "write an express mongodb REST API for user profiles",
+    "should_trigger": false,
+    "notes": "Non-Next.js"
   },
   {
     "query": "bun hono API server with zod openapi, no frontend",
-    "should_trigger": false
+    "should_trigger": false,
+    "notes": "Backend-only"
   }
 ]

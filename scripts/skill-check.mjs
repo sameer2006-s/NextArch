@@ -3,6 +3,7 @@
  * Deterministic checks for the nextarch skill package.
  * Run: npm run skill:check
  */
+import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,10 +11,13 @@ import { fileURLToPath } from "node:url";
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SKILL_DIR = path.join(REPO_ROOT, "skills", "nextarch");
 const SKILL_MD_MAX_LINES = 165;
+const SKILL_MD_WARN_LINES = 150;
+const MIN_EVAL_COUNT = 10;
 const TRIGGER_EVAL_COUNT = 25;
 const LAZY_DOC_EXCLUDE = new Set(["docs/README.md"]);
 
 let failed = false;
+let warned = false;
 
 function ok(msg) {
   console.log(`✓ ${msg}`);
@@ -22,12 +26,20 @@ function err(msg) {
   console.error(`✗ ${msg}`);
   failed = true;
 }
+function warn(msg) {
+  console.warn(`⚠ ${msg}`);
+  warned = true;
+}
 
 function readText(p) {
   return fs.readFileSync(p, "utf8");
 }
 function readJson(p) {
   return JSON.parse(readText(p));
+}
+
+function normalizeDesc(s) {
+  return (s ?? "").replace(/\s+/g, " ").trim();
 }
 
 function parseFrontmatter(content) {
@@ -79,6 +91,19 @@ function walkMd(dir) {
   return out;
 }
 
+function extractSkillMdLazyLinks(content) {
+  const links = new Set();
+  const loadSection = content.match(/4\. Load on demand:[\s\S]*?(?=\n## )/);
+  if (!loadSection) return links;
+  const linkRe = /\]\(([^)]+)\)/g;
+  let m;
+  while ((m = linkRe.exec(loadSection[0])) !== null) {
+    const target = m[1].split("#")[0].trim();
+    if (target && !target.startsWith("http")) links.add(resolveSkillLink("SKILL.md", target));
+  }
+  return links;
+}
+
 function checkPackage() {
   const skillMd = path.join(SKILL_DIR, "SKILL.md");
   const skillJsonPath = path.join(SKILL_DIR, "skill.json");
@@ -108,9 +133,17 @@ function checkPackage() {
 
   if (/<|>/.test(desc)) err("SKILL.md description must not contain angle brackets");
 
+  const jsonDesc = skillJson.description ?? "";
+  if (normalizeDesc(desc) !== normalizeDesc(jsonDesc)) {
+    err("SKILL.md description does not match skill.json description");
+  } else ok("SKILL.md description matches skill.json");
+
   const lines = content.split("\n").length;
   if (lines > SKILL_MD_MAX_LINES) err(`SKILL.md has ${lines} lines (max ${SKILL_MD_MAX_LINES})`);
-  else ok(`SKILL.md ${lines} lines ≤ ${SKILL_MD_MAX_LINES}`);
+  else {
+    ok(`SKILL.md ${lines} lines ≤ ${SKILL_MD_MAX_LINES}`);
+    if (lines > SKILL_MD_WARN_LINES) warn(`SKILL.md has ${lines} lines (warn threshold ${SKILL_MD_WARN_LINES})`);
+  }
 
   if (skillJson.entry !== "SKILL.md") err(`skill.json entry must be SKILL.md`);
   else ok("skill.json entry is SKILL.md");
@@ -133,20 +166,39 @@ function checkPackage() {
   if (broken.length) err(`Broken links:\n  ${broken.join("\n  ")}`);
   else ok(`${linkCount} internal links resolve`);
 
+  const lazyDocs = new Set(skillJson.lazyDocs ?? []);
+  const skillLinks = extractSkillMdLazyLinks(content);
+  const notInLazy = [...skillLinks].filter((l) => !lazyDocs.has(l));
+  if (notInLazy.length) err(`SKILL.md load links not in lazyDocs: ${notInLazy.join(", ")}`);
+  else if (skillLinks.size) ok(`SKILL.md load links (${skillLinks.size}) ⊆ lazyDocs`);
+
   const evalsPath = path.join(SKILL_DIR, "evals", "evals.json");
   if (!fs.existsSync(evalsPath)) err("evals/evals.json not found");
   else {
     const evals = readJson(evalsPath);
+    const count = evals.evals?.length ?? 0;
     if (evals.skill_name !== "nextarch") err(`evals.json skill_name must be nextarch`);
-    else if (!Array.isArray(evals.evals) || evals.evals.length !== 4) err(`evals.json must have 4 evals`);
-    else {
+    else if (!Array.isArray(evals.evals) || count < MIN_EVAL_COUNT) {
+      err(`evals.json must have at least ${MIN_EVAL_COUNT} evals (got ${count})`);
+    } else {
       for (const ev of evals.evals) {
-        if (!ev.id || !ev.prompt || !ev.expectations?.length) {
-          err(`eval ${ev.id}: missing id, prompt, or expectations`);
+        if (!ev.id || !ev.prompt || !ev.expectations?.length || !Array.isArray(ev.files)) {
+          err(`eval ${ev.id}: missing id, prompt, files, or expectations`);
+          break;
+        }
+        for (const file of ev.files) {
+          if (typeof file !== "string" || !fs.existsSync(path.join(SKILL_DIR, file))) {
+            err(`eval ${ev.id}: missing fixture file ${file}`);
+            break;
+          }
+        }
+        if (failed) break;
+        if (ev.must_not != null && !Array.isArray(ev.must_not)) {
+          err(`eval ${ev.id}: must_not must be an array when present`);
           break;
         }
       }
-      if (!failed) ok("evals.json valid (4 evals)");
+      if (!failed) ok(`evals.json valid (${count} evals)`);
     }
   }
 }
@@ -181,6 +233,24 @@ function checkVersion() {
   else ok(`version ${version} matches CHANGELOG`);
 }
 
+function checkForbiddenPaths() {
+  const banned = [".agents", "skills-lock.json", "skills/nextjs-feature-architecture"];
+  let tracked;
+  try {
+    tracked = execSync("git ls-files", { cwd: REPO_ROOT, encoding: "utf8" })
+      .split("\n")
+      .filter(Boolean);
+  } catch {
+    ok("forbidden paths check skipped (not a git repo)");
+    return;
+  }
+  const hits = tracked.filter((f) =>
+    banned.some((prefix) => f === prefix || f.startsWith(`${prefix}/`)),
+  );
+  if (hits.length) err(`Forbidden tracked paths:\n  ${hits.join("\n  ")}`);
+  else ok("no forbidden paths tracked in git");
+}
+
 function checkTriggerEval() {
   const entries = readJson(path.join(SKILL_DIR, "evals", "trigger-eval.json"));
   if (!Array.isArray(entries)) return err("trigger-eval.json must be an array");
@@ -194,6 +264,7 @@ function checkTriggerEval() {
     const row = entries[i];
     if (typeof row.query !== "string" || !row.query.trim()) return err(`Entry ${i}: invalid query`);
     if (typeof row.should_trigger !== "boolean") return err(`Entry ${i}: should_trigger must be boolean`);
+    if (row.notes != null && typeof row.notes !== "string") return err(`Entry ${i}: notes must be a string`);
     const key = row.query.trim().toLowerCase();
     if (seen.has(key)) return err(`Entry ${i}: duplicate query`);
     seen.add(key);
@@ -206,6 +277,7 @@ function checkTriggerEval() {
 }
 
 console.log("nextarch skill:check\n");
+checkForbiddenPaths();
 checkPackage();
 checkLazyDocs();
 checkVersion();
@@ -215,4 +287,5 @@ if (failed) {
   console.error("\nskill:check failed");
   process.exit(1);
 }
-console.log("\nskill:check passed");
+if (warned) console.log("\nskill:check passed with warnings");
+else console.log("\nskill:check passed");
