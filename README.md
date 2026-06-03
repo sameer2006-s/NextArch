@@ -5,7 +5,10 @@
 </p>
 
 <p align="center">
-  <img src="./assets/nextarch-wordmark.svg" alt="NextArch" width="320" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/nextarch-wordmark-dark.png" />
+    <img src="./assets/nextarch-wordmark.png" alt="NextArch" width="216" />
+  </picture>
 </p>
 
 <p align="center">
@@ -181,7 +184,7 @@ Move to a server-first feature slice; keep our src/modules/ layout.
 
 ```
 nextarch-skill-repo/
-├── assets/                   # README wordmark (GitHub-safe SVG)
+├── assets/                   # README wordmark PNGs
 ├── package.json              # skill:check, skill:scaffold, skill:workspace
 ├── scripts/
 │   ├── skill-check.mjs       # CI validators
