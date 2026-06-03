@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="./assets/nextarch-wordmark.svg" alt="NextArch" height="56" />
+  <img src="./assets/nextarch-wordmark.svg" alt="NextArch" width="320" />
 </p>
 
 <p align="center">
