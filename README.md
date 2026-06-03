@@ -5,29 +5,33 @@
 </p>
 
 <p align="center">
-  <img src="./assets/nextarch-wordmark.svg" alt="NextArch" height="48" />
+  <img src="./assets/nextarch-wordmark.svg" alt="NextArch" height="48" width="172" />
 </p>
 
 <p align="center">
   <img
     height="28"
-    src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=16&height=28&duration=2200&pause=400&color=0070F3&center=true&width=520&lines=%3E+analyze+architecture...;%3E+detect+topology...;%3E+enforce+server-first...;%3E+scaffold+slices..."
+    width="440"
+    src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=16&height=28&duration=2200&pause=400&color=0070F3&center=true&vCenter=true&width=440&lines=%3E+analyze+architecture...;%3E+detect+topology...;%3E+enforce+server-first...;%3E+scaffold+slices..."
     alt="&gt; analyze architecture..."
   />
 </p>
 
-<br />
-
-<p>
+<p align="center">
   <a href="https://agentskills.io"><img src="https://img.shields.io/badge/Agent_Skills-compatible-5b21b6?style=flat-square" alt="Agent Skills" /></a>
+  &nbsp;
   <a href="https://github.com/vercel-labs/skills"><img src="https://img.shields.io/badge/CLI-skills.sh-000000?style=flat-square&logo=vercel&logoColor=white" alt="Skills CLI" /></a>
+  &nbsp;
   <img src="https://img.shields.io/badge/Next.js-App_Router-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js" />
+  &nbsp;
   <img src="https://img.shields.io/badge/skill-nextarch-111827?style=flat-square" alt="skill: nextarch" />
+  &nbsp;
   <img src="https://img.shields.io/badge/version-1.9.0-374151?style=flat-square" alt="version 1.9.0" />
+  &nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="MIT License" /></a>
 </p>
 
-<p>
+<p align="center">
   <a href="#install"><strong>Install</strong></a>
   &nbsp;·&nbsp;
   <a href="#quick-start"><strong>Quick start</strong></a>
@@ -39,13 +43,13 @@
   <a href="#contributing"><strong>Contributing</strong></a>
 </p>
 
-<br />
+<p align="center">
+  <code>npx skills add sameer2006-s/NextArch --skill nextarch</code>
+</p>
 
-```bash
-npx skills add sameer2006-s/NextArch --skill nextarch
-```
-
-<sub>Node.js 18+ · <a href="https://cursor.com">Cursor</a> · <a href="https://code.claude.com">Claude Code</a> · <a href="https://developers.openai.com/codex">Codex</a> · <a href="https://windsurf.com">Windsurf</a> · <a href="https://github.com/vercel-labs/skills#supported-agents">50+ agents</a></sub>
+<p align="center">
+  <sub>Node.js 18+ · <a href="https://cursor.com">Cursor</a> · <a href="https://code.claude.com">Claude Code</a> · <a href="https://developers.openai.com/codex">Codex</a> · <a href="https://windsurf.com">Windsurf</a> · <a href="https://github.com/vercel-labs/skills#supported-agents">50+ agents</a></sub>
+</p>
 
 </div>
 
